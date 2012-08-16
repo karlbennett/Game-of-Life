@@ -158,7 +158,7 @@ public class BoardTest {
         ONE_D_BOARD.cell(WIDTH);
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testIllegalDimensionCellForSingleDimensionBoard() throws Exception {
 
         ONE_D_BOARD.cell(0, 0);
@@ -180,10 +180,10 @@ public class BoardTest {
         TWO_D_BOARD.cell(WIDTH, HEIGHT);
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testIllegalDimensionCellForTwoDimensionalBoard() throws Exception {
 
-        ONE_D_BOARD.cell(0, 0, 0);
+        TWO_D_BOARD.cell(0, 0, 0);
     }
 
     @Test
@@ -199,12 +199,12 @@ public class BoardTest {
     @Test(expected = IndexOutOfBoundsException.class)
     public void testOutOfBoundsCellForThreeDimensionalBoard() throws Exception {
 
-        TWO_D_BOARD.cell(WIDTH, HEIGHT, DEPTH);
+        THREE_D_BOARD.cell(WIDTH, HEIGHT, DEPTH);
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testIllegalDimensionCellForThreeDimensionalBoard() throws Exception {
 
-        ONE_D_BOARD.cell(0, 0, 0, 0);
+        THREE_D_BOARD.cell(0, 0, 0, 0);
     }
 }
