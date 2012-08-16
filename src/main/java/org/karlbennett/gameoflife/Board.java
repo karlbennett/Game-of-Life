@@ -25,6 +25,9 @@ public interface Board<C extends Cell, S> {
      *
      * @param x - and arbitrary number of coordinates e.g. x, y, z...
      * @return the <code>Cell</code> found at the supplied coordinates.
+     *
+     * @throws IllegalCoordinateNumber if an incorrect number of coordinates has been supplied. This is so that an
+     *      incorrect use of this API fails as early as possible. This is a runtime exceptions so should not be caught.
      */
-    public C cell(int ...x);
+    public C cell(int ...x) throws IllegalCoordinateNumber;
 }
