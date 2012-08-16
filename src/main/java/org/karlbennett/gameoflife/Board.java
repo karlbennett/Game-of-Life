@@ -10,7 +10,7 @@ package org.karlbennett.gameoflife;
  * @type C - the type of {@see Cell} that this board contains.
  * @type S - the type of state that the Cell contains.
  */
-public interface Board<C extends Cell<S>, S> {
+public interface Board<S extends Comparable<S>, R extends Rule<S>, C extends Cell<S,R>> {
 
     /**
      * Tick the board over one generation, this will apply all the rules to board and return a brand. A brand new
@@ -18,7 +18,7 @@ public interface Board<C extends Cell<S>, S> {
      *
      * @return a new board with the new rule modified state.
      */
-    public Board<C, S> tick();
+    public Board<S, R, C> tick();
 
     /**
      * Retrieve a Cell from the board using the supplied coordinates. This method accepts any number of coordinates.

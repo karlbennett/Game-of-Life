@@ -10,7 +10,7 @@ import java.util.List;
  * This is a cell is used to make up a board for the Game of Life. It's direct neighbours, current and rule modified
  * state can be retrieved.
  */
-public class Cell<S, R extends Rule<R, Cell<S, R>, S>> {
+public class Cell<S extends Comparable<S>, R extends Rule<S>> {
 
     private final S state;
 
@@ -28,8 +28,8 @@ public class Cell<S, R extends Rule<R, Cell<S, R>, S>> {
     protected Cell(S state, List<R> rules, List<Cell<S, R>> neighbours) {
 
         this.state = state;
-        this.rules = Collections.unmodifiableList(rules);
-        this.neighbours = Collections.unmodifiableList(neighbours);
+        this.rules = null == rules ? null : Collections.unmodifiableList(rules);
+        this.neighbours = null == neighbours ? null : Collections.unmodifiableList(neighbours);
     }
 
     /**
@@ -52,7 +52,7 @@ public class Cell<S, R extends Rule<R, Cell<S, R>, S>> {
         S nextState = state;
 
         // Iterate through the rules and return the first changed state.
-        for (R rule : rules) {
+        if (null != rules) for (R rule : rules) {
 
             nextState = rule.apply(this);
 
