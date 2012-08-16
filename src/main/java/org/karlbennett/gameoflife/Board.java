@@ -18,6 +18,10 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
 
     private final InitialState<S> initialState;
 
+    private final int dimensions;
+
+    private final int[] scale;
+
     private final Cell<S, R> root;
 
 
@@ -47,6 +51,10 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
             " Dimensions: (" + dimensions + ") SStateExceptioncale: (" + scale + ")");
         }
 
+        this.dimensions = dimensions;
+
+        this.scale = scale;
+
         this.root = null;
     }
 
@@ -61,6 +69,11 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
      * @return the size of the requested dimension.
      */
     public int dimensionSize(int d) {
+
+        if (dimensions < d) {
+
+            throw new IndexOutOfBoundsException("The supplied dimension index is too large. " + dimensions + " < " + d);
+        }
 
         return 0;
     }
@@ -86,6 +99,21 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
      *      incorrect use of this API fails as early as possible. This is a runtime exceptions so should not be caught.
      */
     public C cell(int ...x) throws IllegalCoordinateNumber {
+
+        if (scale.length != x.length) {
+
+            throw new IllegalArgumentException("The number of coordinates is invalid. Expected: "
+                    + scale.length + " Actual: " + x.length);
+        }
+
+        for (int i = 0; i < x.length; i++) {
+
+            if (scale[i] <= x[i]) {
+
+                throw new IndexOutOfBoundsException("The supplied coordinate with index " + i +
+                        " is larger than it's related dimension of size " + scale[i]);
+            }
+        }
 
         return null;
     }
