@@ -65,16 +65,22 @@ public class BoardTest {
         new Board(null, null, 0);
     }
 
-    @Test
-    public void testDimensionSizeForZeroDimensionBoard() throws Exception {
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testOutOfBoundDimensionSizeForZeroDimensionBoard() throws Exception {
 
-        assertEquals("zero dimension boards first dimension should have correct size", 0, ZERO_D_BOARD.dimensionSize(0));
+        ZERO_D_BOARD.dimensionSize(0);
     }
 
     @Test
     public void testDimensionSizeForSingleDimensionBoard() throws Exception {
 
         assertEquals("single dimension boards first dimension should have correct size", WIDTH, ONE_D_BOARD.dimensionSize(0));
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testOutOfBoundDimensionSizeForSingleDimensionBoard() throws Exception {
+
+        ONE_D_BOARD.dimensionSize(1);
     }
 
     @Test
@@ -84,12 +90,24 @@ public class BoardTest {
         assertEquals("two dimensional boards second dimension should have correct size", HEIGHT, TWO_D_BOARD.dimensionSize(1));
     }
 
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testOutOfBoundDimensionSizeForTwoDimensionalBoard() throws Exception {
+
+        TWO_D_BOARD.dimensionSize(2);
+    }
+
     @Test
     public void testDimensionSizeForThreeDimensionalBoard() throws Exception {
 
         assertEquals("three dimensional boards first dimension should have correct size", WIDTH, THREE_D_BOARD.dimensionSize(0));
         assertEquals("three dimensional boards second dimension should have correct size", HEIGHT, THREE_D_BOARD.dimensionSize(1));
         assertEquals("three dimensional boards third dimension should have correct size", DEPTH, THREE_D_BOARD.dimensionSize(2));
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testOutOfBoundDimensionSizeForThreeDimensionalBoard() throws Exception {
+
+        THREE_D_BOARD.dimensionSize(3);
     }
 
     @Test
