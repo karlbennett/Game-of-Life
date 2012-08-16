@@ -10,7 +10,7 @@ package org.karlbennett.gameoflife;
  * @type C - the type of {@see Cell} that this board contains.
  * @type S - the type of state that the Cell contains.
  */
-public interface Board<C extends Cell, S> {
+public interface Board<C extends Cell<S>, S> {
 
     /**
      * Tick the board over one generation, this will apply all the rules to board and return a brand. A brand new

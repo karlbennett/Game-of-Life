@@ -9,7 +9,7 @@ package org.karlbennett.gameoflife;
  * @type C - the type of {@see Cell} that this rule can be applied to.
  * @type S - the type of state that this rule produces.
  */
-public interface Rule<C extends Cell, S> {
+public interface Rule<C extends Cell<S>, S> {
 
     /**
      * Apply this rule to the supplied <code>Cell</code> and return the produced state.
