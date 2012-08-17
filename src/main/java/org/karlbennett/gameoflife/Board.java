@@ -18,9 +18,7 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
 
     private final InitialState<S> initialState;
 
-    private final int dimensions;
-
-    private final int[] scale;
+    private final int[] dimensions;
 
     private final Cell<S, R> root;
 
@@ -31,9 +29,9 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
      *
      * @param rules - the rules that will be applied on each tick of the Game of Life.
      * @param initialState - the object the supplies the initial state for all the cells.
-     * @param scale - the scale of the dimensions of the board e.g. width, height, depth...
+     * @param dimensions - the dimensions of the board e.g. width, height, depth...
      */
-    public Board(List<Rule<S>> rules, InitialState<S> initialState, int... scale) {
+    public Board(List<Rule<S>> rules, InitialState<S> initialState, int... dimensions) {
 
         this.rules = rules;
 
@@ -44,9 +42,7 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
 
         this.initialState = initialState;
 
-        this.dimensions = scale.length;
-
-        this.scale = scale;
+        this.dimensions = dimensions;
 
         this.root = null;
     }
@@ -63,9 +59,10 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
      */
     public int dimensionSize(int d) {
 
-        if (dimensions < d) {
+        if (dimensions.length <= d) {
 
-            throw new IndexOutOfBoundsException("The supplied dimension index is too large. " + dimensions + " < " + d);
+            throw new IndexOutOfBoundsException("The supplied dimension index is too large. " +
+                    dimensions.length + " < " + d);
         }
 
         return 0;
@@ -93,18 +90,18 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
      */
     public C cell(int ...x) throws IllegalCoordinateNumber {
 
-        if (scale.length != x.length) {
+        if (dimensions.length != x.length) {
 
             throw new IllegalArgumentException("The number of coordinates is invalid. Expected: "
-                    + scale.length + " Actual: " + x.length);
+                    + dimensions.length + " Actual: " + x.length);
         }
 
         for (int i = 0; i < x.length; i++) {
 
-            if (scale[i] <= x[i]) {
+            if (dimensions[i] <= x[i]) {
 
                 throw new IndexOutOfBoundsException("The supplied coordinate with index " + i +
-                        " is larger than it's related dimension of size " + scale[i]);
+                        " is larger than it's related dimension of size " + dimensions[i]);
             }
         }
 
