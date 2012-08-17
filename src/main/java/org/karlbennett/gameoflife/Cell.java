@@ -25,7 +25,7 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
      * @param rules - the rules that should be applied to this cell.
      * @param neighbours - the cells direct neighbouring.
      */
-    protected Cell(S state, List<R> rules, List<Cell<S, R>> neighbours) {
+    public Cell(S state, List<R> rules, List<Cell<S, R>> neighbours) {
 
         this.state = state;
         this.rules = null == rules ? null : Collections.unmodifiableList(rules);
