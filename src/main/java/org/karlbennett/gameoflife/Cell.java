@@ -6,13 +6,15 @@ import java.util.List;
 /**
  * User: karl
  * Date: 16/08/12
- *
+ * <p/>
  * This is a cell is used to make up a board for the Game of Life. It's direct neighbours, current and rule modified
  * state can be retrieved.
  */
 public class Cell<S extends Comparable<S>, R extends Rule<S>> {
 
     private final S state;
+
+    private S nextState;
 
     private final List<R> rules;
 
@@ -21,8 +23,8 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
     /**
      * Construct a new <code>Cell</code> with the supplied state, rules, and neighbours.
      *
-     * @param state - the state for this cell.
-     * @param rules - the rules that should be applied to this cell.
+     * @param state      - the state for this cell.
+     * @param rules      - the rules that should be applied to this cell.
      * @param neighbours - the cells direct neighbouring.
      */
     public Cell(S state, List<R> rules, List<Cell<S, R>> neighbours) {
@@ -49,18 +51,22 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
      */
     public S getNextState() {
 
-        S nextState = state;
+        // If the nextState has not been calculated.
+        if (null == nextState) {
 
-        // Iterate through the rules and return the first changed state.
-        if (null != rules) for (R rule : rules) {
+            nextState = state;
 
-            nextState = rule.apply(this);
+            // Then iterate through the rules and return the first modified state.
+            if (null != rules) for (R rule : rules) {
 
-            if (nextState != state) return nextState;
+                nextState = rule.apply(this);
+
+                if (nextState != state) return nextState;
+            }
         }
 
         // Otherwise return the current state.
-        return state;
+        return nextState;
     }
 
     /**
