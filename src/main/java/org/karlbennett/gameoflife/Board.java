@@ -9,8 +9,8 @@ import java.util.List;
  * This is a board for the Game of Life. It consists of a set of cells that are all connected to each other through N
  * neighbourhood links.
  *
- * @type C - the type of {@see Cell} that this board contains.
- * @type S - the type of state that the Cell contains.
+ * @param  <C> - the type of {@see Cell} that this board contains.
+ * @param <S> - the type of state that the Cell contains.
  */
 public class Board<S extends Comparable<S>, R extends Rule<S>, I extends InitialState<S>, C extends Cell<S,R>> {
 
