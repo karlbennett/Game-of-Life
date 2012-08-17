@@ -31,10 +31,9 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
      *
      * @param rules - the rules that will be applied on each tick of the Game of Life.
      * @param initialState - the object the supplies the initial state for all the cells.
-     * @param dimensions - the number of dimensions of the board e.g. 2D, 3D...
      * @param scale - the scale of the dimensions of the board e.g. width, height, depth...
      */
-    public Board(List<Rule<S>> rules, InitialState<S> initialState, int dimensions, int... scale) {
+    public Board(List<Rule<S>> rules, InitialState<S> initialState, int... scale) {
 
         this.rules = rules;
 
@@ -45,13 +44,7 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
 
         this.initialState = initialState;
 
-        if (scale.length != dimensions) {
-
-            throw new IllegalArgumentException("The number of the scale arguments must match the number of dimensions." +
-            " Dimensions: (" + dimensions + ") SStateExceptioncale: (" + scale + ")");
-        }
-
-        this.dimensions = dimensions;
+        this.dimensions = scale.length;
 
         this.scale = scale;
 

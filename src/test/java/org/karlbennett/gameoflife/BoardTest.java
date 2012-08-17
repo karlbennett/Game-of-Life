@@ -39,30 +39,25 @@ public class BoardTest {
 
     private static final Board<Boolean, Rule<Boolean>, InitialState<Boolean>, Cell<Boolean, Rule<Boolean>>> ZERO_D_BOARD =
             new Board<Boolean, Rule<Boolean>, InitialState<Boolean>, Cell<Boolean, Rule<Boolean>>>(
-                    FALSE_RULES, TRUE_INITIAL_STATE, 0);
+                    FALSE_RULES, TRUE_INITIAL_STATE);
 
     private static final Board<Boolean, Rule<Boolean>, InitialState<Boolean>, Cell<Boolean, Rule<Boolean>>> ONE_D_BOARD =
             new Board<Boolean, Rule<Boolean>, InitialState<Boolean>, Cell<Boolean, Rule<Boolean>>>(
-                    FALSE_RULES, TRUE_INITIAL_STATE, 1, WIDTH);
+                    FALSE_RULES, TRUE_INITIAL_STATE, WIDTH);
 
     private static final Board<Boolean, Rule<Boolean>, InitialState<Boolean>, Cell<Boolean, Rule<Boolean>>> TWO_D_BOARD =
             new Board<Boolean, Rule<Boolean>, InitialState<Boolean>, Cell<Boolean, Rule<Boolean>>>(
-                    FALSE_RULES, TRUE_INITIAL_STATE, 2, WIDTH, HEIGHT);
+                    FALSE_RULES, TRUE_INITIAL_STATE, WIDTH, HEIGHT);
 
     private static final Board<Boolean, Rule<Boolean>, InitialState<Boolean>, Cell<Boolean, Rule<Boolean>>> THREE_D_BOARD =
             new Board<Boolean, Rule<Boolean>, InitialState<Boolean>, Cell<Boolean, Rule<Boolean>>>(
-                    FALSE_RULES, TRUE_INITIAL_STATE, 3, WIDTH, HEIGHT, DEPTH);
+                    FALSE_RULES, TRUE_INITIAL_STATE, WIDTH, HEIGHT, DEPTH);
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testBoardWithMissMatchDimensionAndScale() throws Exception {
-
-        new Board(null, TRUE_INITIAL_STATE, 3, 4, 4);
-    }
 
     @Test(expected = IllegalArgumentException.class)
     public void testBoardWithNoInitialState() throws Exception {
 
-        new Board(null, null, 0);
+        new Board(null, null);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
