@@ -48,7 +48,7 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
 
         this.root = buildBoard(
                 initialState,
-                new ArrayList<Cell<S, R>>(Arrays.asList(new Cell[(int)Math.pow(3, dimensions.length)])),
+                new ArrayList<Cell<S, R>>(Arrays.asList(new Cell[(int)Math.pow(3, dimensions.length) - 1])),
                 dimensions);
     }
 
