@@ -1,5 +1,7 @@
 package org.karlbennett.gameoflife;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,7 +46,16 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
 
         this.dimensions = dimensions;
 
-        this.root = null;
+        this.root = buildBoard(
+                initialState,
+                new ArrayList<Cell<S, R>>(Arrays.asList(new Cell[(int)Math.pow(3, dimensions.length)])),
+                dimensions);
+    }
+
+    private static <S extends Comparable<S>, R extends Rule<S>> Cell<S, R> buildBoard(
+            InitialState<S> initialState, List<Cell<S, R>> neighbours, int... dimensions) {
+
+        return null;
     }
 
 
