@@ -1,5 +1,6 @@
 package org.karlbennett.gameoflife;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
 
     private final List<R> rules;
 
-    private final List<Cell<S, R>> neighbours;
+    private List<Cell<S, R>> neighbours;
 
     /**
      * Construct a new <code>Cell</code> with the supplied state, rules, and neighbours.
@@ -77,5 +78,15 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
     public List<Cell<S, R>> getNeighbours() {
 
         return neighbours;
+    }
+
+    /**
+     * Set the list of cells that are the neighbours of this cell.
+     *
+     * @param neighbours - the list of the cells neighbours.
+     */
+    void setNeighbours(List<Cell<S, R>> neighbours) {
+
+        this.neighbours = neighbours;
     }
 }
