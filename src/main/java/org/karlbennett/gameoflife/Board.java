@@ -98,8 +98,6 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
                     neighbour = neighbour.getNeighbours().get(recursiveIndex);
 
                     newNeighbours.set(previousRecursiveIndex, neighbour);
-
-                    if (null != neighbour) neighbour.getNeighbours().set(previousRecursiveIndex - 1, newCell);
                 }
             }
 
@@ -108,6 +106,10 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
 
                 neighbours.set(recursiveIndex, buildBoard(rules, initialState, newNeighbours, newDimensions));
             }
+
+            neighbour = neighbours.get(recursiveIndex);
+
+            if (null != neighbour) neighbour.getNeighbours().set(recursiveIndex - 1, newCell);
 
             previousRecursiveIndex = recursiveIndex;
         }
