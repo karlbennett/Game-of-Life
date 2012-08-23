@@ -2,6 +2,8 @@ package org.karlbennett.gameoflife;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,6 +55,16 @@ public class BoardTest {
             new Board<Boolean, Rule<Boolean>, InitialState<Boolean>, Cell<Boolean, Rule<Boolean>>>(
                     FALSE_RULES, TRUE_INITIAL_STATE, WIDTH, HEIGHT, DEPTH);
 
+
+    @Test
+    public void testBuildBoard() throws Exception {
+
+        Cell<Boolean, Rule<Boolean>> cell = Board.<Boolean, Rule<Boolean>>buildBoard(
+                FALSE_RULES,
+                TRUE_INITIAL_STATE,
+                new ArrayList<Cell<Boolean, Rule<Boolean>>>(Arrays.<Cell<Boolean, Rule<Boolean>>>asList(new Cell[8])),
+                3, 3);
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void testBoardWithNoInitialState() throws Exception {
