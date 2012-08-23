@@ -32,7 +32,7 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
 
         this.state = state;
         this.rules = null == rules ? null : Collections.unmodifiableList(rules);
-        this.neighbours = null == neighbours ? null : Collections.unmodifiableList(neighbours);
+        this.neighbours = neighbours;
     }
 
     /**
