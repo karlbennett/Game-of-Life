@@ -24,6 +24,23 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
         return (int) Math.pow(3, dimensions) - 1;
     }
 
+    /**
+     * Build the coordinate offset for this cell in relation to it's neighbours. Neighbour lookups are carried out in
+     * relation to the current cell having the coordinates (0,0). Where as the index generation is simplified by
+     * treating the current cell as if it has coordinates (1,1);
+     *
+     * @param dimensions - the number of dimensions this cell supports.
+     * @return the coordinate offset.
+     */
+    public static int[] buildCoordinateOffset(int dimensions) {
+
+        int[] offset = new int[dimensions];
+
+        Arrays.fill(offset, 1);
+
+        return offset;
+    }
+
 
     private final S state;
 
@@ -34,6 +51,8 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
     private int dimensions;
 
     private List<Cell<S, R>> neighbours;
+
+    private int[] coordinateOffset;
 
     /**
      * Construct a new <code>Cell</code> with the supplied state, rules, and neighbours.
@@ -48,6 +67,7 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
         this.rules = rules;
         this.dimensions = dimensions;
         this.neighbours = new ArrayList<Cell<S, R>>(Arrays.<Cell<S, R>>asList(new Cell[neighbourNumber(dimensions)]));
+        this.coordinateOffset = buildCoordinateOffset(dimensions);
     }
 
     public Cell(S state, List<R> rules, int dimensions, List<Cell<S, R>> neighbours) {
@@ -61,6 +81,7 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
         this.rules = rules;
         this.dimensions = dimensions;
         this.neighbours = neighbours;
+        this.coordinateOffset = buildCoordinateOffset(dimensions);
     }
 
     /**
