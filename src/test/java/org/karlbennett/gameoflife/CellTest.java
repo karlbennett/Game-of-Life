@@ -2,6 +2,7 @@ package org.karlbennett.gameoflife;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -73,6 +74,18 @@ public class CellTest {
         assertArrayEquals("offset for three dimension cell should be {1, 1, 1}", new int[]{1, 1, 1}, Cell.buildCoordinateOffset(3));
     }
 
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testCheckCoordinatesWithInvalidCoordinateValues() throws Exception {
+
+        Cell.checkNeighbourCoordinates(new Cell(null, null, 1), 2);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCheckCoordinatesWithInvalidCoordinateNumber() throws Exception {
+
+        Cell.checkNeighbourCoordinates(new Cell(null, null, 1), 0, 0);
+    }
+
     @Test
     public void testCalculateOffsetCoordinates() throws Exception {
 
@@ -122,6 +135,56 @@ public class CellTest {
         assertEquals("index of 2 should be adjusted to 1 for 1 dimensional cell", 1, cell1D.adjustForCellIndex(2));
         assertEquals("index of 5 should be adjusted to 4 for 2 dimensional cell", 4, cell2D.adjustForCellIndex(5));
         assertEquals("index of 14 should be adjusted to 13 for 3 dimensional cell", 13, cell3D.adjustForCellIndex(14));
+    }
+
+    @Test
+    public void testFindAxisNeighbours2D() throws Exception {
+
+        Cell<Boolean, Rule<Boolean>> n_1_1 = new Cell<Boolean, Rule<Boolean>>(null, null, 2);
+
+        Cell<Boolean, Rule<Boolean>> cell = new Cell<Boolean, Rule<Boolean>>(true, null, 2,
+                new ArrayList<Cell<Boolean, Rule<Boolean>>>(
+                        Arrays.<Cell<Boolean, Rule<Boolean>>>asList(
+                                null,
+                                null,
+                                null,
+                                null,
+                                new Cell<Boolean, Rule<Boolean>>(true, null, 2,
+                                        new ArrayList<Cell<Boolean, Rule<Boolean>>>(
+                                                Arrays.<Cell<Boolean, Rule<Boolean>>>asList(
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        n_1_1,
+                                                        null
+                                                )
+                                        )),
+                                null,
+                                null,
+                                null
+                        )
+                )
+        );
+
+        List<Cell<Boolean, Rule<Boolean>>> neighbours = Cell.findAxisNeighbours(cell, 0, 1);
+
+        assertEquals("(1,0) neighbour should be found", n_1_1, neighbours.get(4));
+        assertEquals("(0,-1) neighbour should be found", cell, neighbours.get(1));
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testFindAxisNeighboursWithInvalidCoordinates() throws Exception {
+
+        Cell.findAxisNeighbours(new Cell(null, null, 2), 2, 2);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testFindAxisNeighboursWithInvalidNumberOfCoordinates() throws Exception {
+
+        Cell.findAxisNeighbours(new Cell(null, null, 2), 0);
     }
 
     @Test
@@ -304,7 +367,7 @@ public class CellTest {
         public final int[] coordinates;
 
 
-        private Coordinates(int ...coordinates) {
+        private Coordinates(int... coordinates) {
 
             this.coordinates = coordinates;
         }
