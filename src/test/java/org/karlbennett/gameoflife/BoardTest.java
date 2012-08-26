@@ -62,7 +62,7 @@ public class BoardTest {
         Cell<Boolean, Rule<Boolean>> cell = Board.<Boolean, Rule<Boolean>>buildBoard(
                 new Cell<Boolean, Rule<Boolean>>(TRUE_INITIAL_STATE.state(), FALSE_RULES, 2),
                 TRUE_INITIAL_STATE,
-                3, 3);
+                100, 100);
 
         System.out.println(cell);
     }

@@ -87,7 +87,8 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
             // If the current neighbour does not already exist then create it recursively.
             if (null == cell.getNeighbour(neighbourCoordinates)) {
 
-                neighbour = new Cell<S, R>(initialiser.state(), cell.getRules(), cell.getDimensions());
+                neighbour = new Cell<S, R>(initialiser.state(), cell.getRules(), cell.getDimensions(),
+                        Cell.findAxisNeighbours(cell, neighbourCoordinates));
 
                 // Set the coordinates for the parent cell in relation to the new neighbour cell.
                 Arrays.fill(cellCoordinates, 0);
