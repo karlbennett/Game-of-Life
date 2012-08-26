@@ -162,6 +162,26 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
     }
 
     /**
+     * Get the rules that will be applied to this cell to generate the next state.
+     *
+     * @return the cells rules.
+     */
+    public List<R> getRules() {
+
+        return rules;
+    }
+
+    /**
+     * Get the number of dimensions this cell supports.
+     *
+     * @return the number of dimenstions this cell supports.
+     */
+    public int getDimensions() {
+
+        return dimensions;
+    }
+
+    /**
      * Get all the cells that are neighbours to this cell.
      *
      * @return all the cells neighbours.
