@@ -149,8 +149,7 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
                     neighbour.getNeighbour(coordinates));
         }
 
-        Arrays.fill(neighbourCoordinates, 0);
-        neighbourCoordinates[neighbourCoordinates.length - 1] = -1;
+        for (int i = 0; i < coordinates.length; i++) neighbourCoordinates[i] = coordinates[i] * -1;
 
         neighbours.set(calculateIndex(calculateOffsetCoordinates(cell.coordinateOffset, neighbourCoordinates)), cell);
 

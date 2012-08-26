@@ -90,13 +90,6 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
                 neighbour = new Cell<S, R>(initialiser.state(), cell.getRules(), cell.getDimensions(),
                         Cell.findAxisNeighbours(cell, neighbourCoordinates));
 
-                // Set the coordinates for the parent cell in relation to the new neighbour cell.
-                Arrays.fill(cellCoordinates, 0);
-                cellCoordinates[d] = -1;
-
-                // Set the current cell as the parent neighbour.
-                neighbour.setNeighbour(cell, cellCoordinates);
-
                 // Decrement the current dimension value so that we will stop recursing at some point.
                 newDimensions = Arrays.copyOf(dimensions, dimensions.length);
                 newDimensions[d] = dimensions[d] - 1;
