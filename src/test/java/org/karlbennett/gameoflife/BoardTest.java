@@ -60,10 +60,11 @@ public class BoardTest {
     public void testBuildBoard() throws Exception {
 
         Cell<Boolean, Rule<Boolean>> cell = Board.<Boolean, Rule<Boolean>>buildBoard(
-                FALSE_RULES,
+                new Cell<Boolean, Rule<Boolean>>(TRUE_INITIAL_STATE.state(), FALSE_RULES, 2),
                 TRUE_INITIAL_STATE,
-                new ArrayList<Cell<Boolean, Rule<Boolean>>>(Arrays.<Cell<Boolean, Rule<Boolean>>>asList(new Cell[8])),
                 3, 3);
+
+        System.out.println(cell);
     }
 
     @Test(expected = IllegalArgumentException.class)

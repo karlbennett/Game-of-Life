@@ -46,79 +46,81 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
 
         this.dimensions = dimensions;
 
-//        this.root = buildBoard(
-//                rules,
-//                initialState,
-//                new ArrayList<Cell<S, R>>(Arrays.asList(new Cell[(int)Math.pow(3, dimensions.length) - 1])),
-//                dimensions);
+//        this.root = buildBoard(rules, initialState, null, dimensions);
         this.root = null;
     }
 
     public static <S extends Comparable<S>, R extends Rule<S>> Cell<S, R> buildBoard(
-            List<R> rules,
-            InitialState<S> initialState,
-            List<Cell<S, R>> neighbours,
-            int... dimensions
-    ) {
+            Cell<S, R> cell,
+            InitialState<S> initialiser,
+            int... dimensions) {
+
+        if (null == cell) {
+
+            throw new IllegalArgumentException("Cell cannot be null for Board.buildBoard(Cell<S, R>,InitialState<S>,int...).");
+        }
+
+        if (cell.getDimensions() != dimensions.length) {
+
+            throw new IllegalArgumentException("The number of dimension values submitted must match the number of " +
+                    "dimensions supported by the supplied cell.");
+        }
 
         boolean stop = false;
 
+        // Check to see if any dimension values are less than or equal to zero because if one is then that means we have
+        // reached the edge of the world and should stop building.
         for (int x : dimensions) if (0 >= x) stop = true;
 
         if (stop) return null;
 
-        Cell<S, R> newCell = new Cell<S, R>(initialState.state(), rules, null);
-
         int[] newDimensions;
-        List<Cell<S, R>> newNeighbours;
-        int recursiveIndex;
-        int previousRecursiveIndex = 0;
+        int[] neighbourCoordinates = new int[dimensions.length];
         Cell<S, R> neighbour;
+        int[] cellCoordinates = new int[dimensions.length];
         for (int d = 0; d < dimensions.length; d++) {
-            // Decrement the current dimension value so that we will stop recursing at some point.
-            newDimensions = Arrays.copyOf(dimensions, dimensions.length);
-            newDimensions[d] = dimensions[d] - 1;
 
-            // Create the neighbours list for the new Cell.
-            newNeighbours = new ArrayList<Cell<S, R>>(Arrays.<Cell<S, R>>asList(new Cell[neighbours.size()]));
+            // Set the coordinates for the neighbour we are going to try and create.
+            Arrays.fill(neighbourCoordinates, 0);
+            neighbourCoordinates[d] = 1;
 
-            // Set the neighbour index for the recursive Cell creation for this dimension.
-            // 1D => 1, 2D => 3, 3D => 9...
-            recursiveIndex = (int) Math.pow(3, d);
+            // If the current neighbour does not already exist then create it recursively.
+            if (null == cell.getNeighbour(neighbourCoordinates)) {
 
-            // If we are working with a board that has more than one dimension then the first neighbour of every
-            // dimensional neighbour above dimension x will have had it's first neighbour created by the neighbour at
-            // the current index from the previous dimension.
-            if (0 < previousRecursiveIndex) {
+                neighbour = new Cell<S, R>(initialiser.state(), cell.getRules(), cell.getDimensions());
 
-                neighbour = neighbours.get(previousRecursiveIndex);
+                // Set the coordinates for the parent cell in relation to the new neighbour cell.
+                Arrays.fill(cellCoordinates, 0);
+                cellCoordinates[d] = -1;
 
-                if (null != neighbour) {
+                // Set the current cell as the parent neighbour.
+                neighbour.setNeighbour(cell, cellCoordinates);
 
-                    neighbour = neighbour.getNeighbours().get(recursiveIndex);
+                // Decrement the current dimension value so that we will stop recursing at some point.
+                newDimensions = Arrays.copyOf(dimensions, dimensions.length);
+                newDimensions[d] = dimensions[d] - 1;
 
-                    newNeighbours.set(previousRecursiveIndex, neighbour);
-                }
+                cell.setNeighbour(buildBoard(neighbour, initialiser, newDimensions), neighbourCoordinates);
             }
-
-            // If the current neighbour has not already been populated then create it recursively.
-            if (null == neighbours.get(recursiveIndex)) {
-
-                neighbours.set(recursiveIndex, buildBoard(rules, initialState, newNeighbours, newDimensions));
-            }
-
-            neighbour = neighbours.get(recursiveIndex);
-
-            if (null != neighbour) neighbour.getNeighbours().set(recursiveIndex - 1, newCell);
-
-            previousRecursiveIndex = recursiveIndex;
         }
 
-        newCell.setNeighbours(neighbours);
-
-        return newCell;
+        return cell;
     }
 
+    /**
+     * Find all the neighbours for the cell that is currently being populated. This is done by taken the given parent
+     * and traversing it's neighbours depending on the neighbour index of the parent. That is, if the parent is to the
+     * left of the current cell then the neighbours that can be found are at the coordinates (1,1) from the parent and
+     * (1,-1). Where as if the parent is above the current cell the the neighbours that can be found are at the
+     * coordinates (-1,-1) and (1, -1).
+     *
+     * @param neighbours
+     * @return
+     */
+    public List<Cell<S, R>> findNeighbours(List<Cell<S, R>> neighbours) {
+
+        return null;
+    }
 
     /**
      * Get the size of the requested dimension. For example if the width of a 2D board was required that could be
