@@ -26,8 +26,8 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
 
     /**
      * Build the coordinate offset for this cell in relation to it's neighbours. Neighbour lookups are carried out in
-     * relation to the current cell having the coordinates (0,0). Where as the index generation is simplified by
-     * treating the current cell as if it has coordinates (1,1);
+     * relation to the current cell having the coordinates (0), (0,0), (0,0,0), etc. Where as the index generation is
+     * simplified by treating the current cell as if it has coordinates (1), (1,1), (1,1,1), etc.
      *
      * @param dimensions - the number of dimensions this cell supports.
      * @return the coordinate offset.
@@ -39,37 +39,6 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
         Arrays.fill(offset, 1);
 
         return offset;
-    }
-
-    /**
-     * Utility method for checking the supplied coordinates to make sure they are valid for the supplied cell.
-     *
-     * @param cell        - the cell to check the coordinates against.
-     * @param coordinates - the coordinates to check.
-     * @throws IllegalArgumentException  if the supplied are (0,0) because that is coordinate of this cell not a
-     *                                   neighbour. Or if two many dimensional coordinates are supplied e.g. if (0,1,2)
-     *                                   is supplied for a 2D cell.
-     * @throws IndexOutOfBoundsException if any coordinate value greater than 1 is supplied.
-     */
-    public static void checkNeighbourCoordinates(Cell cell, int... coordinates) {
-
-        if (coordinates.length != cell.dimensions) {
-
-            throw new IllegalArgumentException("The number of supplied coordinates is incorrect. Should be (" +
-                    cell.dimensions + "), but was (" + coordinates.length + ").");
-        }
-
-        int sum = 0;
-
-        for (int c : coordinates) {
-
-            sum += Math.abs(c);
-
-            if (1 < c) throw new IndexOutOfBoundsException("The coordinate value (" + c + ") is too large.");
-        }
-
-        if (0 == sum)
-            throw new IllegalArgumentException("The cell at coordinate (0,0) is the current cell not a neighbour.");
     }
 
     /**
@@ -89,71 +58,10 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
 
         int[] offsetCoordinates = Arrays.copyOf(coordinates, coordinates.length);
 
+        // Calculate the offset.
         for (int i = 0; i < offsetCoordinates.length; i++) offsetCoordinates[i] = coordinates[i] + offset[i];
 
         return offsetCoordinates;
-    }
-
-    /**
-     * Calculate the index for the neighbour requested with the supplied coordinates.
-     *
-     * @param coordinates - the coordinates for the requested neighbour. These must be in relation to the current cell
-     *                    having the coordinates (1,1);
-     * @return the index for the request neighbour.
-     */
-    public static int calculateIndex(int... coordinates) {
-
-        int index = 0;
-
-        for (int i = 0; i < coordinates.length; i++) index += Math.pow(3, i) * coordinates[i];
-
-        return index;
-    }
-
-    /**
-     * Find any neighbours that fall on the dimensional axis' of the neighbour at the supplied coordinates in relation
-     * to the supplied cell. Using the neighbours of the supplied cell.
-     * <p/>
-     * This method is primarily used to find any neighbours that might already exists and can be pre-populated for a new
-     * neighbour that is about to be created.
-     *
-     * @param cell        - the cell to start from when carrying ou the neighbour search.
-     * @param coordinates - the coordinates for the neighbour that is to have it's existing neighbours found.
-     * @return the existing neighbours of the neighbour at the supplied coordinates including the supplied cell.
-     * @throws IllegalArgumentException  if the supplied are (0,0) because that is coordinate of this cell not a
-     *                                   neighbour. Or if two many dimensional coordinates are supplied e.g. if (0,1,2)
-     *                                   is supplied for a 2D cell.
-     * @throws IndexOutOfBoundsException if any coordinate value greater than 1 is supplied.
-     */
-    public static <S extends Comparable<S>, R extends Rule<S>> List<Cell<S, R>> findAxisNeighbours(
-            Cell<S, R> cell,
-            int... coordinates) {
-
-        checkNeighbourCoordinates(cell, coordinates);
-
-        List<Cell<S, R>> neighbours = new ArrayList<Cell<S, R>>(
-                Arrays.<Cell<S, R>>asList(new Cell[Cell.neighbourNumber(coordinates.length)]));
-
-        Cell<S, R> neighbour;
-        int[] neighbourCoordinates = new int[coordinates.length];
-        for (int i = 0; i < coordinates.length - 1; i++) {
-
-            Arrays.fill(neighbourCoordinates, 0);
-            neighbourCoordinates[i] = 1;
-
-            neighbour = cell.getNeighbour(neighbourCoordinates);
-
-            if (null != neighbour) neighbours.set(
-                    cell.adjustForCellIndex(
-                            calculateIndex(calculateOffsetCoordinates(cell.coordinateOffset, neighbourCoordinates))),
-                    neighbour.getNeighbour(coordinates));
-        }
-
-        for (int i = 0; i < coordinates.length; i++) neighbourCoordinates[i] = coordinates[i] * -1;
-
-        neighbours.set(calculateIndex(calculateOffsetCoordinates(cell.coordinateOffset, neighbourCoordinates)), cell);
-
-        return neighbours;
     }
 
 
@@ -170,6 +78,7 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
     private int[] coordinateOffset;
 
     private final int cellIndex;
+
 
     /**
      * Construct a new <code>Cell</code> with the supplied state, rules, and neighbours.
@@ -200,7 +109,7 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
         int[] cellCoordinates = new int[dimensions];
         Arrays.fill(cellCoordinates, 0);
 
-        this.cellIndex = calculateIndex(calculateOffsetCoordinates(this.coordinateOffset, cellCoordinates));
+        this.cellIndex = calculateIndex(cellCoordinates);
     }
 
     /**
@@ -290,9 +199,7 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
      */
     public Cell<S, R> getNeighbour(int... coordinates) {
 
-        checkNeighbourCoordinates(this, coordinates);
-
-        return neighbours.get(adjustForCellIndex(calculateIndex(calculateOffsetCoordinates(coordinateOffset, coordinates))));
+        return neighbours.get(calculateNeighbourIndex(coordinates));
     }
 
     /**
@@ -307,14 +214,12 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
      */
     public void setNeighbour(Cell<S, R> neighbour, int... coordinates) {
 
-        checkNeighbourCoordinates(this, coordinates);
-
-        neighbours.set(adjustForCellIndex(calculateIndex(calculateOffsetCoordinates(coordinateOffset, coordinates))), neighbour);
+        neighbours.set(calculateNeighbourIndex(coordinates), neighbour);
     }
 
     /**
      * Adjust the neighbour index to take into account that the current cell is not in the set of neighbours. It will do
-     * this by subtracting 1 of the index if it is greater than the cell index.
+     * this by subtracting 1 off the index if it is greater than the cell index.
      *
      * @param index the index to adjust.
      * @return the adjusted index.
@@ -322,5 +227,118 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
     public int adjustForCellIndex(final int index) {
 
         return cellIndex > index ? index : index - 1;
+    }
+
+    /**
+     * Utility method for checking the supplied coordinates to make sure they are valid for the supplied cell.
+     *
+     * @param coordinates - the coordinates to check.
+     * @throws IllegalArgumentException  if the supplied are (0,0) because that is coordinate of this cell not a
+     *                                   neighbour. Or if two many dimensional coordinates are supplied e.g. if (0,1,2)
+     *                                   is supplied for a 2D cell.
+     * @throws IndexOutOfBoundsException if any coordinate value greater than 1 is supplied.
+     */
+    public void checkNeighbourCoordinates(int... coordinates) {
+
+        if (coordinates.length != dimensions) {
+
+            throw new IllegalArgumentException("The number of supplied coordinates is incorrect. Should be (" +
+                    dimensions + "), but was (" + coordinates.length + ").");
+        }
+
+        int sum = 0;
+
+        for (int c : coordinates) {
+
+            sum += Math.abs(c);
+
+            if (1 < c) throw new IndexOutOfBoundsException("The coordinate value (" + c + ") is too large.");
+        }
+
+        if (0 == sum)
+            throw new IllegalArgumentException("The cell at coordinate (0,0) is the current cell not a neighbour.");
+    }
+
+    /**
+     * Apply the current cells offset to a set of coordinates.
+     *
+     * @param coordinates - coordinates to have the offset applied to.
+     * @return the offset coordinates.
+     * @throws IllegalStateException if the offset array length is not equal to the number of coordinates.
+     */
+    public int[] calculateOffsetCoordinates(int... coordinates) {
+
+        return calculateOffsetCoordinates(coordinateOffset, coordinates);
+    }
+
+    /**
+     * Calculate the index for the cell requested with the supplied neighbour coordinates.
+     *
+     * @param coordinates - the coordinates for the requested cell. These must be in relation to the current cell
+     *                    having the coordinates (0,0);
+     * @return the index for the request neighbour.
+     */
+    public int calculateIndex(int... coordinates) {
+
+        int[] offsetCoordinates = calculateOffsetCoordinates(coordinates);
+
+        int index = 0;
+
+        for (int i = 0; i < offsetCoordinates.length; i++) index += Math.pow(3, i) * offsetCoordinates[i];
+
+        return index;
+    }
+
+    /**
+     * Calculate the index for the neighbour requested with the supplied coordinates. This method adjusts the index in
+     * relation to the current cell not being contained within the neighbour list.
+     *
+     * @param coordinates - the coordinates for the requested neighbour. These must be in relation to the current cell
+     *                    having the coordinates (0,0);
+     * @return the index for the request neighbour.
+     */
+    public int calculateNeighbourIndex(int... coordinates) {
+
+        checkNeighbourCoordinates(coordinates);
+
+        return adjustForCellIndex(calculateIndex(coordinates));
+    }
+
+    /**
+     * Find any neighbours that fall on the dimensional axis' of the neighbour at the supplied coordinates in relation
+     * to the supplied cell. Using the neighbours of the supplied cell.
+     * <p/>
+     * This method is primarily used to find any neighbours that might already exists and can be pre-populated for a new
+     * neighbour that is about to be created.
+     *
+     * @param coordinates - the coordinates for the neighbour that is to have it's existing neighbours found.
+     * @return the existing neighbours of the neighbour at the supplied coordinates including the supplied cell.
+     * @throws IllegalArgumentException  if the supplied are (0,0) because that is coordinate of this cell not a
+     *                                   neighbour. Or if two many dimensional coordinates are supplied e.g. if (0,1,2)
+     *                                   is supplied for a 2D cell.
+     * @throws IndexOutOfBoundsException if any coordinate value greater than 1 is supplied.
+     */
+    public List<Cell<S, R>> findAxisNeighbours(int... coordinates) {
+
+        List<Cell<S, R>> neighbours = new ArrayList<Cell<S, R>>(
+                Arrays.<Cell<S, R>>asList(new Cell[Cell.neighbourNumber(coordinates.length)]));
+
+        Cell<S, R> neighbour;
+        int[] neighbourCoordinates = new int[coordinates.length];
+        for (int i = 0; i < coordinates.length - 1; i++) {
+
+            Arrays.fill(neighbourCoordinates, 0);
+            neighbourCoordinates[i] = 1;
+
+            neighbour = getNeighbour(neighbourCoordinates);
+
+            if (null != neighbour) neighbours.set(calculateNeighbourIndex(neighbourCoordinates), neighbour.getNeighbour(coordinates));
+        }
+
+        for (int i = 0; i < coordinates.length; i++) neighbourCoordinates[i] = coordinates[i] * -1;
+
+        neighbours.set(calculateNeighbourIndex(neighbourCoordinates), this);
+
+        return neighbours;
     }
 }

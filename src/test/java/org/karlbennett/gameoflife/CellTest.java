@@ -23,6 +23,12 @@ public class CellTest {
     private static final int[] coordinates_1_1_1 = {1, 1, 1};
     private static final int[] coordinates_1_2_3 = {1, 2, 3};
 
+    private static final Cell CELL_0D = new Cell(null, null, 0);
+    private static final Cell CELL_1D = new Cell(null, null, 1);
+    private static final Cell CELL_2D = new Cell(null, null, 2);
+    private static final Cell CELL_3D = new Cell(null, null, 3);
+    private static final Cell CELL_4D = new Cell(null, null, 4);
+
     private static final Cell<Coordinates, Rule<Coordinates>> _n1_n1 = new Cell<Coordinates, Rule<Coordinates>>(
             new Coordinates(-1, -1), null, 0);
     private static final Cell<Coordinates, Rule<Coordinates>> _0_n1 = new Cell<Coordinates, Rule<Coordinates>>(
@@ -77,13 +83,13 @@ public class CellTest {
     @Test(expected = IndexOutOfBoundsException.class)
     public void testCheckCoordinatesWithInvalidCoordinateValues() throws Exception {
 
-        Cell.checkNeighbourCoordinates(new Cell(null, null, 1), 2);
+        new Cell(null, null, 1).checkNeighbourCoordinates(2);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testCheckCoordinatesWithInvalidCoordinateNumber() throws Exception {
 
-        Cell.checkNeighbourCoordinates(new Cell(null, null, 1), 0, 0);
+        new Cell(null, null, 1).checkNeighbourCoordinates(0, 0);
     }
 
     @Test
@@ -111,30 +117,91 @@ public class CellTest {
     @Test
     public void testCalculateIndex() throws Exception {
 
-        assertEquals("coordinates (0) should produce index 0", 0, Cell.calculateIndex(0));
-        assertEquals("coordinates (0,0) should produce index 0", 0, Cell.calculateIndex(0, 0));
-        assertEquals("coordinates (0,0,0)  should produce index 0", 0, Cell.calculateIndex(0, 0, 0));
-        assertEquals("coordinates (1)  should produce index 1", 1, Cell.calculateIndex(1));
-        assertEquals("coordinates (1,1)  should produce index 4", 4, Cell.calculateIndex(1, 1));
-        assertEquals("coordinates (1,1,1)  should produce index 13", 13, Cell.calculateIndex(1, 1, 1));
-        assertEquals("coordinates (1,1,1,1)  should produce index 40", 40, Cell.calculateIndex(1, 1, 1, 1));
-        assertEquals("coordinates (1,2)  should produce index 7", 7, Cell.calculateIndex(1, 2));
-        assertEquals("coordinates (1,2,3)  should produce index 34", 34, Cell.calculateIndex(1, 2, 3));
-        assertEquals("coordinates (1,2,3,4)  should produce index 142", 142, Cell.calculateIndex(1, 2, 3, 4));
+        assertEquals("coordinates (0) should produce index 1", 1, CELL_1D.calculateIndex(0));
+        assertEquals("coordinates (0,0) should produce index 4", 4, CELL_2D.calculateIndex(0, 0));
+        assertEquals("coordinates (0,0,0)  should produce index 13", 13, CELL_3D.calculateIndex(0, 0, 0));
+        assertEquals("coordinates (0,0,0,0)  should produce index 13", 40, CELL_4D.calculateIndex(0, 0, 0, 0));
+        assertEquals("coordinates (1)  should produce index 2", 2, CELL_1D.calculateIndex(1));
+        assertEquals("coordinates (1,1)  should produce index 8", 8, CELL_2D.calculateIndex(1, 1));
+        assertEquals("coordinates (1,1,1)  should produce index 26", 26, CELL_3D.calculateIndex(1, 1, 1));
+        assertEquals("coordinates (1,1,1,1)  should produce index 80", 80, CELL_4D.calculateIndex(1, 1, 1, 1));
+        assertEquals("coordinates (-1)  should produce index 0", 0, CELL_1D.calculateIndex(-1));
+        assertEquals("coordinates (-1,-1)  should produce index 0", 0, CELL_2D.calculateIndex(-1, -1));
+        assertEquals("coordinates (-1,-1,-1)  should produce index 0", 0, CELL_3D.calculateIndex(-1, -1, -1));
+        assertEquals("coordinates (-1,-1,-1,-1)  should produce index 0", 0, CELL_4D.calculateIndex(-1, -1, -1, -1));
+        assertEquals("coordinates (1,2)  should produce index 11", 11, CELL_2D.calculateIndex(1, 2));
+        assertEquals("coordinates (1,2,3)  should produce index 47", 47, CELL_3D.calculateIndex(1, 2, 3));
+        assertEquals("coordinates (1,2,3,4)  should produce index 182", 182, CELL_4D.calculateIndex(1, 2, 3, 4));
+    }
+
+    @Test
+    public void testCalculateNeighbourIndex() throws Exception {
+
+        assertEquals("coordinates (1)  should produce index 2", 1, CELL_1D.calculateNeighbourIndex(1));
+        assertEquals("coordinates (1,1)  should produce index 8", 7, CELL_2D.calculateNeighbourIndex(1, 1));
+        assertEquals("coordinates (1,1,1)  should produce index 26", 25, CELL_3D.calculateNeighbourIndex(1, 1, 1));
+        assertEquals("coordinates (1,1,1,1)  should produce index 79", 79, CELL_4D.calculateNeighbourIndex(1, 1, 1, 1));
+        assertEquals("coordinates (-1)  should produce index 0", 0, CELL_1D.calculateNeighbourIndex(-1));
+        assertEquals("coordinates (-1,-1)  should produce index 0", 0, CELL_2D.calculateNeighbourIndex(-1, -1));
+        assertEquals("coordinates (-1,-1,-1)  should produce index 0", 0, CELL_3D.calculateNeighbourIndex(-1, -1, -1));
+        assertEquals("coordinates (-1,-1,-1,-1)  should produce index 0", 0, CELL_4D.calculateNeighbourIndex(-1, -1, -1, -1));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCalculateNeighbourIndexWith1DCellIndex() throws Exception {
+
+        CELL_1D.calculateNeighbourIndex(0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCalculateNeighbourIndexWith2DCellIndex() throws Exception {
+
+        CELL_2D.calculateNeighbourIndex(0, 0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCalculateNeighbourIndexWith3DCellIndex() throws Exception {
+
+        CELL_3D.calculateNeighbourIndex(0, 0, 0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCalculateNeighbourIndexWith4DCellIndex() throws Exception {
+
+        CELL_4D.calculateNeighbourIndex(0, 0, 0, 0);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testCalculateNeighbourIndexWith1DOutOfBoundIndex() throws Exception {
+
+        CELL_1D.calculateNeighbourIndex(2);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testCalculateNeighbourIndexWith2DOutOfBoundIndex() throws Exception {
+
+        CELL_2D.calculateNeighbourIndex(0, 2);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testCalculateNeighbourIndexWith3DOutOfBoundIndex() throws Exception {
+
+        CELL_3D.calculateNeighbourIndex(0, 0, 2);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testCalculateNeighbourIndexWith4DOutOfBoundIndex() throws Exception {
+
+        CELL_4D.calculateNeighbourIndex(0, 0, 0, 2);
     }
 
     @Test
     public void testAdjustForIndex() throws Exception {
 
-        Cell cell0D = new Cell(null, null, 0);
-        Cell cell1D = new Cell(null, null, 1);
-        Cell cell2D = new Cell(null, null, 2);
-        Cell cell3D = new Cell(null, null, 3);
-
-        assertEquals("index of 0 should be adjusted to -1 for 0 dimensional cell", -1, cell0D.adjustForCellIndex(0));
-        assertEquals("index of 2 should be adjusted to 1 for 1 dimensional cell", 1, cell1D.adjustForCellIndex(2));
-        assertEquals("index of 5 should be adjusted to 4 for 2 dimensional cell", 4, cell2D.adjustForCellIndex(5));
-        assertEquals("index of 14 should be adjusted to 13 for 3 dimensional cell", 13, cell3D.adjustForCellIndex(14));
+        assertEquals("index of 0 should be adjusted to -1 for 0 dimensional cell", -1, CELL_0D.adjustForCellIndex(0));
+        assertEquals("index of 2 should be adjusted to 1 for 1 dimensional cell", 1, CELL_1D.adjustForCellIndex(2));
+        assertEquals("index of 5 should be adjusted to 4 for 2 dimensional cell", 4, CELL_2D.adjustForCellIndex(5));
+        assertEquals("index of 14 should be adjusted to 13 for 3 dimensional cell", 13, CELL_3D.adjustForCellIndex(14));
     }
 
     @Test
@@ -169,7 +236,7 @@ public class CellTest {
                 )
         );
 
-        List<Cell<Boolean, Rule<Boolean>>> neighbours = Cell.findAxisNeighbours(cell, 0, 1);
+        List<Cell<Boolean, Rule<Boolean>>> neighbours = cell.findAxisNeighbours(0, 1);
 
         assertEquals("(1,0) neighbour should be found", n_1_1, neighbours.get(4));
         assertEquals("(0,-1) neighbour should be found", cell, neighbours.get(1));
@@ -178,13 +245,13 @@ public class CellTest {
     @Test(expected = IndexOutOfBoundsException.class)
     public void testFindAxisNeighboursWithInvalidCoordinates() throws Exception {
 
-        Cell.findAxisNeighbours(new Cell(null, null, 2), 2, 2);
+        new Cell(null, null, 2).findAxisNeighbours(2, 2);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testFindAxisNeighboursWithInvalidNumberOfCoordinates() throws Exception {
 
-        Cell.findAxisNeighbours(new Cell(null, null, 2), 0);
+        new Cell(null, null, 2).findAxisNeighbours(0);
     }
 
     @Test

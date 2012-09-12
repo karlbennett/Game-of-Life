@@ -88,7 +88,7 @@ public class Board<S extends Comparable<S>, R extends Rule<S>, I extends Initial
             if (null == cell.getNeighbour(neighbourCoordinates)) {
 
                 neighbour = new Cell<S, R>(initialiser.state(), cell.getRules(), cell.getDimensions(),
-                        Cell.findAxisNeighbours(cell, neighbourCoordinates));
+                        cell.findAxisNeighbours(neighbourCoordinates));
 
                 // Decrement the current dimension value so that we will stop recursing at some point.
                 newDimensions = Arrays.copyOf(dimensions, dimensions.length);
