@@ -15,13 +15,15 @@ import static org.junit.Assert.*;
  */
 public class CellTest {
 
-    private static final int[] coordinates_0 = {0};
-    private static final int[] coordinates_0_0 = {0, 0};
-    private static final int[] coordinates_0_0_0 = {0, 0, 0};
-    private static final int[] coordinates_1 = {1};
-    private static final int[] coordinates_1_1 = {1, 1};
-    private static final int[] coordinates_1_1_1 = {1, 1, 1};
-    private static final int[] coordinates_1_2_3 = {1, 2, 3};
+    private static final int[] COORDINATES_0 = {0};
+    private static final int[] COORDINATES_0_0 = {0, 0};
+    private static final int[] COORDINATES_0_0_0 = {0, 0, 0};
+    private static final int[] COORDINATES_0_0_0_0 = {0, 0, 0, 0};
+    private static final int[] COORDINATES_1 = {1};
+    private static final int[] COORDINATES_1_1 = {1, 1};
+    private static final int[] COORDINATES_1_1_1 = {1, 1, 1};
+    private static final int[] COORDINATES_1_1_1_1 = {1, 1, 1, 1};
+    private static final int[] COORDINATES_1_2_3 = {1, 2, 3};
 
     private static final Cell CELL_0D = new Cell(null, null, 0);
     private static final Cell CELL_1D = new Cell(null, null, 1);
@@ -29,36 +31,36 @@ public class CellTest {
     private static final Cell CELL_3D = new Cell(null, null, 3);
     private static final Cell CELL_4D = new Cell(null, null, 4);
 
-    private static final Cell<Coordinates, Rule<Coordinates>> _n1_n1 = new Cell<Coordinates, Rule<Coordinates>>(
+    private static final Cell<Coordinates, Rule<Coordinates>> _N1_N1 = new Cell<Coordinates, Rule<Coordinates>>(
             new Coordinates(-1, -1), null, 0);
-    private static final Cell<Coordinates, Rule<Coordinates>> _0_n1 = new Cell<Coordinates, Rule<Coordinates>>(
+    private static final Cell<Coordinates, Rule<Coordinates>> _0_N1 = new Cell<Coordinates, Rule<Coordinates>>(
             new Coordinates(0, -1), null, 0);
-    private static final Cell<Coordinates, Rule<Coordinates>> _1_n1 = new Cell<Coordinates, Rule<Coordinates>>(
+    private static final Cell<Coordinates, Rule<Coordinates>> _1_N1 = new Cell<Coordinates, Rule<Coordinates>>(
             new Coordinates(1, -1), null, 0);
-    private static final Cell<Coordinates, Rule<Coordinates>> _n1_0 = new Cell<Coordinates, Rule<Coordinates>>(
+    private static final Cell<Coordinates, Rule<Coordinates>> _N1_0 = new Cell<Coordinates, Rule<Coordinates>>(
             new Coordinates(-1, 0), null, 0);
     private static final Cell<Coordinates, Rule<Coordinates>> _0_0 = new Cell<Coordinates, Rule<Coordinates>>(
             new Coordinates(0, 0), null, 0);
     private static final Cell<Coordinates, Rule<Coordinates>> _1_0 = new Cell<Coordinates, Rule<Coordinates>>(
             new Coordinates(1, 0), null, 0);
-    private static final Cell<Coordinates, Rule<Coordinates>> _n1_1 = new Cell<Coordinates, Rule<Coordinates>>(
+    private static final Cell<Coordinates, Rule<Coordinates>> _N1_1 = new Cell<Coordinates, Rule<Coordinates>>(
             new Coordinates(-1, 1), null, 0);
     private static final Cell<Coordinates, Rule<Coordinates>> _0_1 = new Cell<Coordinates, Rule<Coordinates>>(
             new Coordinates(0, 1), null, 0);
     private static final Cell<Coordinates, Rule<Coordinates>> _1_1 = new Cell<Coordinates, Rule<Coordinates>>(
             new Coordinates(1, 1), null, 0);
 
-    private static final int index_n1_n1 = 0;
-    private static final int index_0_n1 = 1;
-    private static final int index_1_n1 = 2;
-    private static final int index_n1_0 = 3;
-    private static final int index_1_0 = 4;
-    private static final int index_n1_1 = 5;
-    private static final int index_0_1 = 6;
-    private static final int index_1_1 = 7;
+    private static final int INDEX_N1_N1 = 0;
+    private static final int INDEX_0_N1 = 1;
+    private static final int INDEX_1_N1 = 2;
+    private static final int INDEX_N1_0 = 3;
+    private static final int INDEX_1_0 = 4;
+    private static final int INDEX_N1_1 = 5;
+    private static final int INDEX_0_1 = 6;
+    private static final int INDEX_1_1 = 7;
 
     private static final List<Cell<Coordinates, Rule<Coordinates>>> NEIGHBOURS = Collections.unmodifiableList(
-            Arrays.asList(_n1_n1, _0_n1, _1_n1, _n1_0, _1_0, _n1_1, _0_1, _1_1)
+            Arrays.asList(_N1_N1, _0_N1, _1_N1, _N1_0, _1_0, _N1_1, _0_1, _1_1)
     );
 
 
@@ -81,13 +83,25 @@ public class CellTest {
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
-    public void testCheckCoordinatesWithInvalidCoordinateValues() throws Exception {
+    public void testStaticCheckNeighbourCoordinatesWithInvalidCoordinateValues() throws Exception {
+
+        Cell.checkNeighbourCoordinates(1, new int[]{2});
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testInstanceCheckNeighbourCoordinatesWithInvalidCoordinateValues() throws Exception {
 
         new Cell(null, null, 1).checkNeighbourCoordinates(2);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCheckCoordinatesWithInvalidCoordinateNumber() throws Exception {
+    public void testStaticCheckNeighbourCoordinatesWithInvalidCoordinateNumber() throws Exception {
+
+        Cell.checkNeighbourCoordinates(1, new int[]{0, 0});
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInstanceCheckNeighbourCoordinatesWithInvalidCoordinateNumber() throws Exception {
 
         new Cell(null, null, 1).checkNeighbourCoordinates(0, 0);
     }
@@ -95,27 +109,47 @@ public class CellTest {
     @Test
     public void testCalculateOffsetCoordinates() throws Exception {
 
-        assertArrayEquals("offset {0} against coordinates {0} should produce {0}", coordinates_0, Cell.calculateOffsetCoordinates(coordinates_0, 0));
-        assertArrayEquals("offset {0, 0} against coordinates {0, 0} should produce {0, 0}", coordinates_0_0, Cell.calculateOffsetCoordinates(coordinates_0_0, 0, 0));
-        assertArrayEquals("offset {0, 0, 0} against coordinates {0, 0, 0} should produce {0, 0, 0}", coordinates_0_0_0, Cell.calculateOffsetCoordinates(coordinates_0_0_0, 0, 0, 0));
-        assertArrayEquals("offset {0, 0, 0} against coordinates {1, 1, 1} should produce {1, 1, 1}", coordinates_1_1_1, Cell.calculateOffsetCoordinates(coordinates_0_0_0, 1, 1, 1));
-        assertArrayEquals("offset {1} against coordinates {0} should produce {1}", coordinates_1, Cell.calculateOffsetCoordinates(coordinates_1, 0));
-        assertArrayEquals("offset {1, 1} against coordinates {0, 0} should produce {1, 1}", coordinates_1_1, Cell.calculateOffsetCoordinates(coordinates_1_1, 0, 0));
-        assertArrayEquals("offset {1, 1, 1} against coordinates {0, 0, 0} should produce {1, 1, 1}", coordinates_1_1_1, Cell.calculateOffsetCoordinates(coordinates_1_1_1, 0, 0, 0));
-        assertArrayEquals("offset {1, 2, 3} against coordinates {0, 0, 0} should produce {1, 2, 3}", coordinates_1_2_3, Cell.calculateOffsetCoordinates(coordinates_1_2_3, 0, 0, 0));
-        assertArrayEquals("offset {1, 2, 3} against coordinates {1, 1, 1} should produce {2, 3, 4}", new int[]{2, 3, 4}, Cell.calculateOffsetCoordinates(coordinates_1_2_3, 1, 1, 1));
-        assertArrayEquals("offset {1, 2, 3} against coordinates {3, 2, 1} should produce {4, 4, 4}", new int[]{4, 4, 4}, Cell.calculateOffsetCoordinates(coordinates_1_2_3, 3, 2, 1));
-        assertArrayEquals("offset {1, 2, 3} against coordinates {-1, -1, -1} should produce {0, 1, 2}", new int[]{0, 1, 2}, Cell.calculateOffsetCoordinates(coordinates_1_2_3, -1, -1, -1));
+        assertArrayEquals("offset {0} against coordinates {0} should produce {0}", COORDINATES_0, Cell.calculateOffsetCoordinates(COORDINATES_0, 0));
+        assertArrayEquals("offset {0, 0} against coordinates {0, 0} should produce {0, 0}", COORDINATES_0_0, Cell.calculateOffsetCoordinates(COORDINATES_0_0, 0, 0));
+        assertArrayEquals("offset {0, 0, 0} against coordinates {0, 0, 0} should produce {0, 0, 0}", COORDINATES_0_0_0, Cell.calculateOffsetCoordinates(COORDINATES_0_0_0, 0, 0, 0));
+        assertArrayEquals("offset {0, 0, 0} against coordinates {1, 1, 1} should produce {1, 1, 1}", COORDINATES_1_1_1, Cell.calculateOffsetCoordinates(COORDINATES_0_0_0, 1, 1, 1));
+        assertArrayEquals("offset {1} against coordinates {0} should produce {1}", COORDINATES_1, Cell.calculateOffsetCoordinates(COORDINATES_1, 0));
+        assertArrayEquals("offset {1, 1} against coordinates {0, 0} should produce {1, 1}", COORDINATES_1_1, Cell.calculateOffsetCoordinates(COORDINATES_1_1, 0, 0));
+        assertArrayEquals("offset {1, 1, 1} against coordinates {0, 0, 0} should produce {1, 1, 1}", COORDINATES_1_1_1, Cell.calculateOffsetCoordinates(COORDINATES_1_1_1, 0, 0, 0));
+        assertArrayEquals("offset {1, 2, 3} against coordinates {0, 0, 0} should produce {1, 2, 3}", COORDINATES_1_2_3, Cell.calculateOffsetCoordinates(COORDINATES_1_2_3, 0, 0, 0));
+        assertArrayEquals("offset {1, 2, 3} against coordinates {1, 1, 1} should produce {2, 3, 4}", new int[]{2, 3, 4}, Cell.calculateOffsetCoordinates(COORDINATES_1_2_3, 1, 1, 1));
+        assertArrayEquals("offset {1, 2, 3} against coordinates {3, 2, 1} should produce {4, 4, 4}", new int[]{4, 4, 4}, Cell.calculateOffsetCoordinates(COORDINATES_1_2_3, 3, 2, 1));
+        assertArrayEquals("offset {1, 2, 3} against coordinates {-1, -1, -1} should produce {0, 1, 2}", new int[]{0, 1, 2}, Cell.calculateOffsetCoordinates(COORDINATES_1_2_3, -1, -1, -1));
     }
 
     @Test(expected = IllegalStateException.class)
     public void testCalculateOffsetCoordinatesWithInvalidCoordinateLength() throws Exception {
 
-        Cell.calculateOffsetCoordinates(coordinates_1_2_3, -1, -1);
+        Cell.calculateOffsetCoordinates(COORDINATES_1_1_1, -1, -1);
     }
 
     @Test
-    public void testCalculateIndex() throws Exception {
+    public void testStaticCalculateIndex() throws Exception {
+
+        assertEquals("coordinates (0) should produce index 1", 1, Cell.calculateIndex(COORDINATES_1, 0));
+        assertEquals("coordinates (0,0) should produce index 4", 4, Cell.calculateIndex(COORDINATES_1_1, 0, 0));
+        assertEquals("coordinates (0,0,0)  should produce index 13", 13, Cell.calculateIndex(COORDINATES_1_1_1, 0, 0, 0));
+        assertEquals("coordinates (0,0,0,0)  should produce index 13", 40, Cell.calculateIndex(COORDINATES_1_1_1_1, 0, 0, 0, 0));
+        assertEquals("coordinates (1)  should produce index 2", 2, Cell.calculateIndex(COORDINATES_1, 1));
+        assertEquals("coordinates (1,1)  should produce index 8", 8, Cell.calculateIndex(COORDINATES_1_1, 1, 1));
+        assertEquals("coordinates (1,1,1)  should produce index 26", 26, Cell.calculateIndex(COORDINATES_1_1_1, 1, 1, 1));
+        assertEquals("coordinates (1,1,1,1)  should produce index 80", 80, Cell.calculateIndex(COORDINATES_1_1_1_1, 1, 1, 1, 1));
+        assertEquals("coordinates (-1)  should produce index 0", 0, Cell.calculateIndex(COORDINATES_1, -1));
+        assertEquals("coordinates (-1,-1)  should produce index 0", 0, Cell.calculateIndex(COORDINATES_1_1, -1, -1));
+        assertEquals("coordinates (-1,-1,-1)  should produce index 0", 0, Cell.calculateIndex(COORDINATES_1_1_1, -1, -1, -1));
+        assertEquals("coordinates (-1,-1,-1,-1)  should produce index 0", 0, Cell.calculateIndex(COORDINATES_1_1_1_1, -1, -1, -1, -1));
+        assertEquals("coordinates (1,2)  should produce index 11", 11, Cell.calculateIndex(COORDINATES_1_1, 1, 2));
+        assertEquals("coordinates (1,2,3)  should produce index 47", 47, Cell.calculateIndex(COORDINATES_1_1_1, 1, 2, 3));
+        assertEquals("coordinates (1,2,3,4)  should produce index 182", 182, Cell.calculateIndex(COORDINATES_1_1_1_1, 1, 2, 3, 4));
+    }
+
+    @Test
+    public void testInstanceCalculateIndex() throws Exception {
 
         assertEquals("coordinates (0) should produce index 1", 1, CELL_1D.calculateIndex(0));
         assertEquals("coordinates (0,0) should produce index 4", 4, CELL_2D.calculateIndex(0, 0));
@@ -135,7 +169,20 @@ public class CellTest {
     }
 
     @Test
-    public void testCalculateNeighbourIndex() throws Exception {
+    public void testStaticCalculateNeighbourIndex() throws Exception {
+
+        assertEquals("coordinates (1)  should produce index 2", 1, Cell.calculateNeighbourIndex(1, CELL_1D.getCellIndex(), COORDINATES_1, 1));
+        assertEquals("coordinates (1,1)  should produce index 8", 7, Cell.calculateNeighbourIndex(2, CELL_2D.getCellIndex(), COORDINATES_1_1, 1, 1));
+        assertEquals("coordinates (1,1,1)  should produce index 26", 25, Cell.calculateNeighbourIndex(3, CELL_3D.getCellIndex(), COORDINATES_1_1_1, 1, 1, 1));
+        assertEquals("coordinates (1,1,1,1)  should produce index 79", 79, Cell.calculateNeighbourIndex(4, CELL_4D.getCellIndex(), COORDINATES_1_1_1_1, 1, 1, 1, 1));
+        assertEquals("coordinates (-1)  should produce index 0", 0, Cell.calculateNeighbourIndex(1, CELL_1D.getCellIndex(), COORDINATES_1, -1));
+        assertEquals("coordinates (-1,-1)  should produce index 0", 0, Cell.calculateNeighbourIndex(2, CELL_2D.getCellIndex(), COORDINATES_1_1, -1, -1));
+        assertEquals("coordinates (-1,-1,-1)  should produce index 0", 0, Cell.calculateNeighbourIndex(3, CELL_3D.getCellIndex(), COORDINATES_1_1_1, -1, -1, -1));
+        assertEquals("coordinates (-1,-1,-1,-1)  should produce index 0", 0, Cell.calculateNeighbourIndex(4, CELL_4D.getCellIndex(), COORDINATES_1_1_1_1, -1, -1, -1, -1));
+    }
+
+    @Test
+    public void testInstanceCalculateNeighbourIndex() throws Exception {
 
         assertEquals("coordinates (1)  should produce index 2", 1, CELL_1D.calculateNeighbourIndex(1));
         assertEquals("coordinates (1,1)  should produce index 8", 7, CELL_2D.calculateNeighbourIndex(1, 1));
@@ -148,60 +195,119 @@ public class CellTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCalculateNeighbourIndexWith1DCellIndex() throws Exception {
+    public void testStaticCalculateNeighbourIndexWith1DCellIndex() throws Exception {
+
+        Cell.calculateNeighbourIndex(1, CELL_1D.getCellIndex(), COORDINATES_1, 0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInstanceCalculateNeighbourIndexWith1DCellIndex() throws Exception {
 
         CELL_1D.calculateNeighbourIndex(0);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCalculateNeighbourIndexWith2DCellIndex() throws Exception {
+    public void testStaticCalculateNeighbourIndexWith2DCellIndex() throws Exception {
+
+        Cell.calculateNeighbourIndex(2, CELL_2D.getCellIndex(), COORDINATES_1_1, 0, 0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testINstanceCalculateNeighbourIndexWith2DCellIndex() throws Exception {
 
         CELL_2D.calculateNeighbourIndex(0, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCalculateNeighbourIndexWith3DCellIndex() throws Exception {
+    public void testStaticCalculateNeighbourIndexWith3DCellIndex() throws Exception {
+
+        Cell.calculateNeighbourIndex(3, CELL_3D.getCellIndex(), COORDINATES_1_1_1, 0, 0, 0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInstanceCalculateNeighbourIndexWith3DCellIndex() throws Exception {
 
         CELL_3D.calculateNeighbourIndex(0, 0, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCalculateNeighbourIndexWith4DCellIndex() throws Exception {
+    public void testStaticCalculateNeighbourIndexWith4DCellIndex() throws Exception {
+
+        Cell.calculateNeighbourIndex(4, CELL_4D.getCellIndex(), COORDINATES_1_1_1_1, 0, 0, 0, 0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInstanceCalculateNeighbourIndexWith4DCellIndex() throws Exception {
 
         CELL_4D.calculateNeighbourIndex(0, 0, 0, 0);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
-    public void testCalculateNeighbourIndexWith1DOutOfBoundIndex() throws Exception {
+    public void testStaticCalculateNeighbourIndexWith1DOutOfBoundIndex() throws Exception {
+
+        Cell.calculateNeighbourIndex(1, CELL_1D.getCellIndex(), COORDINATES_1, 2);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testInstanceCalculateNeighbourIndexWith1DOutOfBoundIndex() throws Exception {
 
         CELL_1D.calculateNeighbourIndex(2);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
-    public void testCalculateNeighbourIndexWith2DOutOfBoundIndex() throws Exception {
+    public void testStaticCalculateNeighbourIndexWith2DOutOfBoundIndex() throws Exception {
+
+        Cell.calculateNeighbourIndex(2, CELL_2D.getCellIndex(), COORDINATES_1_1, 0, 2);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testInstanceCalculateNeighbourIndexWith2DOutOfBoundIndex() throws Exception {
 
         CELL_2D.calculateNeighbourIndex(0, 2);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
-    public void testCalculateNeighbourIndexWith3DOutOfBoundIndex() throws Exception {
+    public void testStaticCalculateNeighbourIndexWith3DOutOfBoundIndex() throws Exception {
+
+        Cell.calculateNeighbourIndex(3, CELL_3D.getCellIndex(), COORDINATES_1_1_1, 0, 0, 2);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testInstanceCalculateNeighbourIndexWith3DOutOfBoundIndex() throws Exception {
 
         CELL_3D.calculateNeighbourIndex(0, 0, 2);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
-    public void testCalculateNeighbourIndexWith4DOutOfBoundIndex() throws Exception {
+    public void testStaticCalculateNeighbourIndexWith4DOutOfBoundIndex() throws Exception {
+
+        Cell.calculateNeighbourIndex(4, CELL_4D.getCellIndex(), COORDINATES_1_1_1_1, 0, 0, 0, 2);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testInstanceCalculateNeighbourIndexWith4DOutOfBoundIndex() throws Exception {
 
         CELL_4D.calculateNeighbourIndex(0, 0, 0, 2);
     }
 
     @Test
-    public void testAdjustForIndex() throws Exception {
+    public void testStaticAdjustForIndex() throws Exception {
+
+        assertEquals("index of 0 should be adjusted to -1 for 0 dimensional cell", -1, Cell.adjustForCellIndex(CELL_0D.getCellIndex(), 0));
+        assertEquals("index of 2 should be adjusted to 1 for 1 dimensional cell", 1, Cell.adjustForCellIndex(CELL_1D.getCellIndex(), 2));
+        assertEquals("index of 5 should be adjusted to 4 for 2 dimensional cell", 4, Cell.adjustForCellIndex(CELL_2D.getCellIndex(), 5));
+        assertEquals("index of 14 should be adjusted to 13 for 3 dimensional cell", 13, Cell.adjustForCellIndex(CELL_3D.getCellIndex(), 14));
+        assertEquals("index of 41 should be adjusted to 40 for 4 dimensional cell", 40, Cell.adjustForCellIndex(CELL_4D.getCellIndex(), 41));
+    }
+
+    @Test
+    public void testInctanseAdjustForIndex() throws Exception {
 
         assertEquals("index of 0 should be adjusted to -1 for 0 dimensional cell", -1, CELL_0D.adjustForCellIndex(0));
         assertEquals("index of 2 should be adjusted to 1 for 1 dimensional cell", 1, CELL_1D.adjustForCellIndex(2));
         assertEquals("index of 5 should be adjusted to 4 for 2 dimensional cell", 4, CELL_2D.adjustForCellIndex(5));
         assertEquals("index of 14 should be adjusted to 13 for 3 dimensional cell", 13, CELL_3D.adjustForCellIndex(14));
+        assertEquals("index of 41 should be adjusted to 40 for 4 dimensional cell", 40, CELL_4D.adjustForCellIndex(41));
     }
 
     @Test
@@ -326,12 +432,12 @@ public class CellTest {
         Cell<Coordinates, Rule<Coordinates>> cell = new Cell<Coordinates, Rule<Coordinates>>(_0_0.getState(), null,
                 2, NEIGHBOURS);
 
-        assertEquals("cell set to coordinate (-1,-1) should be  correct", _n1_n1.getState(), cell.getNeighbour(-1, -1).getState());
-        assertEquals("cell set to coordinate (0,-1) should be correct", _0_n1.getState(), cell.getNeighbour(0, -1).getState());
-        assertEquals("cell set to coordinate (1,-1) should be correct", _1_n1.getState(), cell.getNeighbour(1, -1).getState());
-        assertEquals("cell set to coordinate (-1,0) should be correct", _n1_0.getState(), cell.getNeighbour(-1, 0).getState());
+        assertEquals("cell set to coordinate (-1,-1) should be  correct", _N1_N1.getState(), cell.getNeighbour(-1, -1).getState());
+        assertEquals("cell set to coordinate (0,-1) should be correct", _0_N1.getState(), cell.getNeighbour(0, -1).getState());
+        assertEquals("cell set to coordinate (1,-1) should be correct", _1_N1.getState(), cell.getNeighbour(1, -1).getState());
+        assertEquals("cell set to coordinate (-1,0) should be correct", _N1_0.getState(), cell.getNeighbour(-1, 0).getState());
         assertEquals("cell set to coordinate (1,0) should be correct", _1_0.getState(), cell.getNeighbour(1, 0).getState());
-        assertEquals("cell set to coordinate (-1,1) should be correct", _n1_1.getState(), cell.getNeighbour(-1, 1).getState());
+        assertEquals("cell set to coordinate (-1,1) should be correct", _N1_1.getState(), cell.getNeighbour(-1, 1).getState());
         assertEquals("cell set to coordinate (0,1) should be correct", _0_1.getState(), cell.getNeighbour(0, 1).getState());
         assertEquals("cell set to coordinate (1,1) should be correct", _1_1.getState(), cell.getNeighbour(1, 1).getState());
     }
@@ -369,37 +475,37 @@ public class CellTest {
         Cell<Coordinates, Rule<Coordinates>> cell = new Cell<Coordinates, Rule<Coordinates>>(
                 _0_0.getState(), null, 2);
 
-        cell.setNeighbour(_n1_n1, -1, -1);
-        assertEquals("cell at coordinate (-1,-1) should be  correct", _n1_n1.getState(),
-                cell.getNeighbours().get(index_n1_n1).getState());
+        cell.setNeighbour(_N1_N1, -1, -1);
+        assertEquals("cell at coordinate (-1,-1) should be  correct", _N1_N1.getState(),
+                cell.getNeighbours().get(INDEX_N1_N1).getState());
 
-        cell.setNeighbour(_0_n1, 0, -1);
-        assertEquals("cell at coordinate (0,-1) should be  correct", _0_n1.getState(),
-                cell.getNeighbours().get(index_0_n1).getState());
+        cell.setNeighbour(_0_N1, 0, -1);
+        assertEquals("cell at coordinate (0,-1) should be  correct", _0_N1.getState(),
+                cell.getNeighbours().get(INDEX_0_N1).getState());
 
-        cell.setNeighbour(_1_n1, 1, -1);
-        assertEquals("cell at coordinate (1,-1) should be  correct", _1_n1.getState(),
-                cell.getNeighbours().get(index_1_n1).getState());
+        cell.setNeighbour(_1_N1, 1, -1);
+        assertEquals("cell at coordinate (1,-1) should be  correct", _1_N1.getState(),
+                cell.getNeighbours().get(INDEX_1_N1).getState());
 
-        cell.setNeighbour(_n1_0, -1, 0);
-        assertEquals("cell at coordinate (-1,0) should be  correct", _n1_0.getState(),
-                cell.getNeighbours().get(index_n1_0).getState());
+        cell.setNeighbour(_N1_0, -1, 0);
+        assertEquals("cell at coordinate (-1,0) should be  correct", _N1_0.getState(),
+                cell.getNeighbours().get(INDEX_N1_0).getState());
 
         cell.setNeighbour(_1_0, 1, 0);
         assertEquals("cell at coordinate (1,0) should be  correct", _1_0.getState(),
-                cell.getNeighbours().get(index_1_0).getState());
+                cell.getNeighbours().get(INDEX_1_0).getState());
 
-        cell.setNeighbour(_n1_1, -1, 1);
-        assertEquals("cell at coordinate (-1,1) should be  correct", _n1_1.getState(),
-                cell.getNeighbours().get(index_n1_1).getState());
+        cell.setNeighbour(_N1_1, -1, 1);
+        assertEquals("cell at coordinate (-1,1) should be  correct", _N1_1.getState(),
+                cell.getNeighbours().get(INDEX_N1_1).getState());
 
         cell.setNeighbour(_0_1, 0, 1);
         assertEquals("cell at coordinate (0,1) should be  correct", _0_1.getState(),
-                cell.getNeighbours().get(index_0_1).getState());
+                cell.getNeighbours().get(INDEX_0_1).getState());
 
         cell.setNeighbour(_1_1, 1, 1);
         assertEquals("cell at coordinate (1,1) should be  correct", _1_1.getState(),
-                cell.getNeighbours().get(index_1_1).getState());
+                cell.getNeighbours().get(INDEX_1_1).getState());
     }
 
     @Test(expected = IllegalArgumentException.class)
