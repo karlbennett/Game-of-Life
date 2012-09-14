@@ -265,6 +265,13 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
         return neighbours;
     }
 
+    /**
+     * Get a list of neighbours are contained in this cells neighbours list but surround the cell at the supplied
+     * coordinates offset from the current cell.
+     *
+     * @param offset - the offset coordinate for the new cell that treat the current cell as (0,0).
+     * @return the new offset neighbours list.
+     */
     public List<Cell<S, R>> getNeighbours(int... offset) {
 
         int[] coordinates = new int[offset.length];
