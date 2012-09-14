@@ -2,6 +2,7 @@ package org.karlbennett.gameoflife;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -136,7 +137,7 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
      * relation to the current cell not being contained within the neighbour list.
      *
      * @param dimensions  - the number of dimensions supported by the current cell.
-     * @param cellIndex - the index of the current cell.
+     * @param cellIndex   - the index of the current cell.
      * @param offset      - the offset that will need to be applied to the neighbour coordinates so that they are
      *                    correct if the current cells coordinates are assumed to be (1,1).
      * @param coordinates - the coordinates for the requested neighbour. These must be in relation to the current cell
@@ -148,6 +149,106 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
         checkNeighbourCoordinates(dimensions, coordinates);
 
         return adjustForCellIndex(cellIndex, calculateIndex(offset, coordinates));
+    }
+
+    /**
+     * Build a list of neighbours from the neighbours in the supplied cell offset so that the list is indexed as if the
+     * current cell resides in the neighbour location defined with the supplied offset coordinates.
+     *
+     * @param cell   - the cell that will supply the list of neighbours to be used.
+     * @param offset - the offset that defines the coordinates to be used for the location of the new current cell.
+     * @param <S>    - the type of state for the supplied cell.
+     * @param <R>    - the type of rule for the supplied cell.
+     * @return the new offset neighbour list.
+     */
+    public static <S extends Comparable<S>, R extends Rule<S>> List<Cell<S, R>> buildOffsetNeighbours(
+            Cell<S, R> cell, int[] offset) {
+
+        int[] coordinates = new int[offset.length];
+
+        Arrays.fill(coordinates, -1);
+
+        int[] inverseOffset = new int[offset.length];
+
+        for (int i = 0; i < offset.length; i++) inverseOffset[i] = offset[i] * -1;
+
+        return buildOffsetNeighbours(cell, offset, inverseOffset, coordinates);
+    }
+
+    /**
+     * A private method to contain the working logic for the public {@code buildOffsetNeighbours} method. This has be
+     * done so that the logic that only needs to be evaluated once can be done within the public method and then the
+     * more dynamic logic can be run within the private method.
+     *
+     * @param cell   - the cell that will supply the list of neighbours to be used.
+     * @param offset - the offset that defines the coordinates to be used for the location of the new current cell.
+     * @param inverseOffset - coordinates that are the inverse of the offset coordinates, these are used to check if the
+     *                      supplied cell should be included as a neighbour.
+     * @param coordinates - the coordinates for the current neighbour that should be retrieved.
+     * @param <S>    - the type of state for the supplied cell.
+     * @param <R>    - the type of rule for the supplied cell.
+     * @return the new offset neighbour list.
+     */
+    private static <S extends Comparable<S>, R extends Rule<S>> List<Cell<S, R>> buildOffsetNeighbours(
+            Cell<S, R> cell, int[] offset, int[] inverseOffset, int[] coordinates) {
+
+        // Try and retrieve the neighbour at the supplied coordinates in relation to the supplied offset.
+        Cell<S, R> neighbour = null;
+        List<Cell<S, R>> offsetNeighbours = null;
+        try {
+
+            // If the supplied coordinate equal the inverse of the supplied offset then the offset neighbour is actually
+            // the supplied cell.
+            if (Arrays.equals(inverseOffset, coordinates)) {
+
+                neighbour = cell;
+
+            } else {
+
+                neighbour = cell.getNeighbour(calculateOffsetCoordinates(offset, coordinates));
+
+            }
+
+            offsetNeighbours = Arrays.<Cell<S, R>>asList(new Cell[cell.getNeighbours().size()]);
+
+            // Add the retrieved neighbour to the new offset list.
+            offsetNeighbours.set(
+                    calculateNeighbourIndex(offset.length, cell.getCellIndex(), cell.getCoordinateOffset(), coordinates),
+                    neighbour);
+
+            // If the neighbour cannot be retrieved then return an empty list.
+        } catch (IllegalArgumentException e) {
+
+            return Collections.emptyList();
+
+        } catch (IndexOutOfBoundsException e) {
+
+            return Collections.emptyList();
+        }
+
+        // Retrieve the rest of the offset neighbours by incrementally recursing through all the possible neighbour
+        // coordinates.
+        List<Cell<S, R>> tempOffsetNeighbours = null;
+        Cell<S, R> tempNeighbour = null;
+        int[] coordinatesCopy = null;
+        for (int i = 0; i < coordinates.length; i++) {
+
+            coordinatesCopy = Arrays.copyOf(coordinates, coordinates.length);
+
+            coordinatesCopy[i]++;
+
+            tempOffsetNeighbours = buildOffsetNeighbours(cell, offset, inverseOffset, coordinatesCopy);
+
+            for (int j = 0; j < tempOffsetNeighbours.size(); j++) {
+
+                tempNeighbour = tempOffsetNeighbours.get(j);
+
+                if (null != tempNeighbour) offsetNeighbours.set(j, tempNeighbour);
+            }
+        }
+
+        // Then return the new offset neighbour list.
+        return offsetNeighbours;
     }
 
 
@@ -264,6 +365,12 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
         return neighbours;
     }
 
+    public List<Cell<S, R>> getNeighbours(int... offset) {
+
+
+        return Collections.<Cell<S, R>>emptyList();
+    }
+
     /**
      * Set the list of cells that are the neighbours of this cell.
      *
@@ -302,6 +409,16 @@ public class Cell<S extends Comparable<S>, R extends Rule<S>> {
     public void setNeighbour(Cell<S, R> neighbour, int... coordinates) {
 
         neighbours.set(calculateNeighbourIndex(coordinates), neighbour);
+    }
+
+    /**
+     * Get the offset that should be applied to give this cell the coordinates (1,1).
+     *
+     * @return this cells coordinate offset.
+     */
+    public int[] getCoordinateOffset() {
+
+        return coordinateOffset;
     }
 
     /**

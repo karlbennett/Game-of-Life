@@ -301,13 +301,48 @@ public class CellTest {
     }
 
     @Test
-    public void testInctanseAdjustForIndex() throws Exception {
+    public void testInstanceAdjustForIndex() throws Exception {
 
         assertEquals("index of 0 should be adjusted to -1 for 0 dimensional cell", -1, CELL_0D.adjustForCellIndex(0));
         assertEquals("index of 2 should be adjusted to 1 for 1 dimensional cell", 1, CELL_1D.adjustForCellIndex(2));
         assertEquals("index of 5 should be adjusted to 4 for 2 dimensional cell", 4, CELL_2D.adjustForCellIndex(5));
         assertEquals("index of 14 should be adjusted to 13 for 3 dimensional cell", 13, CELL_3D.adjustForCellIndex(14));
         assertEquals("index of 41 should be adjusted to 40 for 4 dimensional cell", 40, CELL_4D.adjustForCellIndex(41));
+    }
+
+    @Test
+    public void testBuildOffsetNeighbours() throws Exception {
+
+        Cell[] neighbours = {
+                new Cell<Integer, Rule<Integer>>(0, null, 2),
+                new Cell<Integer, Rule<Integer>>(1, null, 2),
+                new Cell<Integer, Rule<Integer>>(2, null, 2),
+                new Cell<Integer, Rule<Integer>>(3, null, 2),
+                new Cell<Integer, Rule<Integer>>(4, null, 2),
+                new Cell<Integer, Rule<Integer>>(5, null, 2),
+                new Cell<Integer, Rule<Integer>>(6, null, 2),
+                new Cell<Integer, Rule<Integer>>(7, null, 2),
+        };
+
+        Cell<Integer, Rule<Integer>> cell = new Cell<Integer, Rule<Integer>>(-1, null, 2,
+                Arrays.<Cell<Integer, Rule<Integer>>>asList(neighbours));
+
+        Cell[] testOffsetNeighbours = {
+                neighbours[1],
+                neighbours[2],
+                null,
+                cell,
+                null,
+                neighbours[6],
+                neighbours[7],
+                null
+        };
+
+        List<Cell<Integer, Rule<Integer>>> offsetNeighbours = Cell.buildOffsetNeighbours(cell, new int[]{1, 0});
+
+        assertNotNull("a list of offset neighbours should be returned.", offsetNeighbours);
+        assertArrayEquals("offset neighbours list should be correct", testOffsetNeighbours,
+                offsetNeighbours.toArray(new Cell[offsetNeighbours.size()]));
     }
 
     @Test
