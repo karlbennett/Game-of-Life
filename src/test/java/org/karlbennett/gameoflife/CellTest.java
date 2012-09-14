@@ -338,7 +338,7 @@ public class CellTest {
                 null
         };
 
-        List<Cell<Integer, Rule<Integer>>> offsetNeighbours = Cell.buildOffsetNeighbours(cell, new int[]{1, 0});
+        List<Cell<Integer, Rule<Integer>>> offsetNeighbours = cell.getNeighbours(new int[]{1, 0});
 
         assertNotNull("a list of offset neighbours should be returned.", offsetNeighbours);
         assertArrayEquals("offset neighbours list should be correct", testOffsetNeighbours,
