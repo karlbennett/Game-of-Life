@@ -311,6 +311,65 @@ public class CellTest {
     }
 
     @Test
+    public void testIncrementCoordinates() throws Exception {
+
+        assertArrayEquals("coordinates (0,0,0) with max 2 should be incremented to (1,0,0).", new int[] {1,0,0},
+                Cell.incrementCoordinates(2, new int[] {0,0,0}));
+        assertArrayEquals("coordinates (1,0,0) with max 2 should be incremented to (2,0,0).", new int[] {2,0,0},
+                Cell.incrementCoordinates(2, new int[] {1,0,0}));
+        assertArrayEquals("coordinates (2,0,0) with max 2 should be incremented to (0,1,0).", new int[] {0,1,0},
+                Cell.incrementCoordinates(2, new int[] {2,0,0}));
+        assertArrayEquals("coordinates (0,1,0) with max 2 should be incremented to (1,1,0).", new int[] {1,1,0},
+                Cell.incrementCoordinates(2, new int[] {0,1,0}));
+        assertArrayEquals("coordinates (1,1,0) with max 2 should be incremented to (2,1,0).", new int[] {2,1,0},
+                Cell.incrementCoordinates(2, new int[] {1,1,0}));
+        assertArrayEquals("coordinates (2,1,0) with max 2 should be incremented to (0,2,0).", new int[] {0,2,0},
+                Cell.incrementCoordinates(2, new int[] {2,1,0}));
+        assertArrayEquals("coordinates (0,2,0) with max 2 should be incremented to (1,2,0).", new int[] {1,2,0},
+                Cell.incrementCoordinates(2, new int[] {0,2,0}));
+        assertArrayEquals("coordinates (1,2,0) with max 2 should be incremented to (2,2,0).", new int[] {2,2,0},
+                Cell.incrementCoordinates(2, new int[] {1,2,0}));
+        assertArrayEquals("coordinates (2,2,0) with max 2 should be incremented to (0,0,1).", new int[] {0,0,1},
+                Cell.incrementCoordinates(2, new int[] {2,2,0}));
+        assertArrayEquals("coordinates (0,0,1) with max 2 should be incremented to (1,0,1).", new int[] {1,0,1},
+                Cell.incrementCoordinates(2, new int[] {0,0,1}));
+        assertArrayEquals("coordinates (1,0,1) with max 2 should be incremented to (2,0,1).", new int[] {2,0,1},
+                Cell.incrementCoordinates(2, new int[] {1,0,1}));
+        assertArrayEquals("coordinates (2,0,1) with max 2 should be incremented to (0,1,1).", new int[] {0,1,1},
+                Cell.incrementCoordinates(2, new int[] {2,0,1}));
+        assertArrayEquals("coordinates (0,1,1) with max 2 should be incremented to (1,1,1).", new int[] {1,1,1},
+                Cell.incrementCoordinates(2, new int[] {0,1,1}));
+        assertArrayEquals("coordinates (1,1,1) with max 2 should be incremented to (2,1,1).", new int[] {2,1,1},
+                Cell.incrementCoordinates(2, new int[] {1,1,1}));
+        assertArrayEquals("coordinates (2,1,1) with max 2 should be incremented to (0,2,1).", new int[] {0,2,1},
+                Cell.incrementCoordinates(2, new int[] {2,1,1}));
+        assertArrayEquals("coordinates (0,2,1) with max 2 should be incremented to (1,2,1).", new int[] {1,2,1},
+                Cell.incrementCoordinates(2, new int[] {0,2,1}));
+        assertArrayEquals("coordinates (1,2,1) with max 2 should be incremented to (2,2,1).", new int[] {2,2,1},
+                Cell.incrementCoordinates(2, new int[] {1,2,1}));
+        assertArrayEquals("coordinates (2,2,1) with max 2 should be incremented to (0,0,2).", new int[] {0,0,2},
+                Cell.incrementCoordinates(2, new int[] {2,2,1}));
+        assertArrayEquals("coordinates (0,0,2) with max 2 should be incremented to (1,0,2).", new int[] {1,0,2},
+                Cell.incrementCoordinates(2, new int[] {0,0,2}));
+        assertArrayEquals("coordinates (1,0,2) with max 2 should be incremented to (2,0,2).", new int[] {2,0,2},
+                Cell.incrementCoordinates(2, new int[] {1,0,2}));
+        assertArrayEquals("coordinates (2,0,2) with max 2 should be incremented to (0,1,2).", new int[] {0,1,2},
+                Cell.incrementCoordinates(2, new int[] {2,0,2}));
+        assertArrayEquals("coordinates (0,1,2) with max 2 should be incremented to (1,1,2).", new int[] {1,1,2},
+                Cell.incrementCoordinates(2, new int[] {0,1,2}));
+        assertArrayEquals("coordinates (1,1,2) with max 2 should be incremented to (2,1,2).", new int[] {2,1,2},
+                Cell.incrementCoordinates(2, new int[] {1,1,2}));
+        assertArrayEquals("coordinates (2,1,2) with max 2 should be incremented to (0,2,2).", new int[] {0,2,2},
+                Cell.incrementCoordinates(2, new int[] {2,1,2}));
+        assertArrayEquals("coordinates (0,2,2) with max 2 should be incremented to (1,2,2).", new int[] {1,2,2},
+                Cell.incrementCoordinates(2, new int[] {0,2,2}));
+        assertArrayEquals("coordinates (1,2,2) with max 2 should be incremented to (2,2,2).", new int[] {2,2,2},
+                Cell.incrementCoordinates(2, new int[] {1,2,2}));
+        assertArrayEquals("coordinates (2,2,2) with max 2 should be incremented to (0,0,0).", new int[] {0,0,0},
+                Cell.incrementCoordinates(2, new int[] {2,2,2}));
+    }
+
+    @Test
     public void testBuildOffsetNeighbours() throws Exception {
 
         Cell[] neighbours = {
@@ -343,56 +402,6 @@ public class CellTest {
         assertNotNull("a list of offset neighbours should be returned.", offsetNeighbours);
         assertArrayEquals("offset neighbours list should be correct", testOffsetNeighbours,
                 offsetNeighbours.toArray(new Cell[offsetNeighbours.size()]));
-    }
-
-    @Test
-    public void testFindAxisNeighbours2D() throws Exception {
-
-        Cell<Boolean, Rule<Boolean>> n_1_1 = new Cell<Boolean, Rule<Boolean>>(null, null, 2);
-
-        Cell<Boolean, Rule<Boolean>> cell = new Cell<Boolean, Rule<Boolean>>(true, null, 2,
-                new ArrayList<Cell<Boolean, Rule<Boolean>>>(
-                        Arrays.<Cell<Boolean, Rule<Boolean>>>asList(
-                                null,
-                                null,
-                                null,
-                                null,
-                                new Cell<Boolean, Rule<Boolean>>(true, null, 2,
-                                        new ArrayList<Cell<Boolean, Rule<Boolean>>>(
-                                                Arrays.<Cell<Boolean, Rule<Boolean>>>asList(
-                                                        null,
-                                                        null,
-                                                        null,
-                                                        null,
-                                                        null,
-                                                        null,
-                                                        n_1_1,
-                                                        null
-                                                )
-                                        )),
-                                null,
-                                null,
-                                null
-                        )
-                )
-        );
-
-        List<Cell<Boolean, Rule<Boolean>>> neighbours = cell.findAxisNeighbours(0, 1);
-
-        assertEquals("(1,0) neighbour should be found", n_1_1, neighbours.get(4));
-        assertEquals("(0,-1) neighbour should be found", cell, neighbours.get(1));
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testFindAxisNeighboursWithInvalidCoordinates() throws Exception {
-
-        new Cell(null, null, 2).findAxisNeighbours(2, 2);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testFindAxisNeighboursWithInvalidNumberOfCoordinates() throws Exception {
-
-        new Cell(null, null, 2).findAxisNeighbours(0);
     }
 
     @Test
